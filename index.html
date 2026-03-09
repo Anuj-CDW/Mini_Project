@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Personal Expense Manager</title>
+
+<link rel="stylesheet" href="expenses.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<header>
+<h1>Personal Expense Management System</h1>
+<p>Track • Control • Save Money</p>
+</header>
+
+
+<div class="container">
+
+
+
+
+<div class="card">
+
+<h2>Monthly Income</h2>
+
+<input type="number" id="income" placeholder="Enter Monthly Income">
+
+<button onclick="calculateBudget()">Calculate Budget</button>
+
+<div class="budget">
+
+<p>Needs (50%): ₹ <span id="needs">0</span></p>
+<p>Wants (30%): ₹ <span id="wants">0</span></p>
+<p>Savings (20%): ₹ <span id="savings">0</span></p>
+
+</div>
+
+</div>
+
+
+<!-- ADD EXPENSE -->
+
+<div class="card">
+
+<h2>Add Daily Expense</h2>
+
+<div class="form">
+
+<input type="text" id="expenseName" placeholder="Expense Name">
+
+<input type="number" id="amount" placeholder="Amount">
+
+<input type="date" id="date">
+
+<select id="category">
+
+<option>Groceries</option>
+<option>Utilities</option>
+<option>Transport</option>
+<option>Insurance</option>
+<option>Rent</option>
+
+<option>Dining Out</option>
+<option>Hobbies</option>
+<option>Netflix</option>
+<option>Travel</option>
+<option>Shopping</option>
+
+<option>Savings</option>
+
+</select>
+
+<button onclick="addExpense()">Add Expense</button>
+
+</div>
+
+</div>
+
+
+
+
+<div class="card">
+
+<h2>Daily Expense List</h2>
+
+<table>
+
+<thead>
+<tr>
+<th>Date</th>
+<th>Expense</th>
+<th>Category</th>
+<th>Amount</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="expenseTable"></tbody>
+
+</table>
+
+<h3>Total Expense: ₹ <span id="totalExpense">0</span></h3>
+
+<h3>Monthly Expense: ₹ <span id="monthlyExpense">0</span></h3>
+
+</div>
+
+
+
+
+<div class="card chartCard">
+
+<h2>Monthly Expense Distribution</h2>
+
+<canvas id="expenseChart"></canvas>
+
+</div>
+
+
+</div>
+
+<script src="expenses.js"></script>
+
+</body>
+</html>
