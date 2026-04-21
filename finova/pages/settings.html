@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Settings – Finova</title>
+  <link rel="stylesheet" href="../css/dashboard.css"/>
+  <link rel="stylesheet" href="../css/subpage.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-box">F</div><strong>Finova</strong></div>
+    <nav class="sidebar-nav">
+      <a class="nav-item" href="dashboard.html"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Dashboard</a>
+      <a class="nav-item" href="#" id="addExpenseNav"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Add Expense</a>
+      <a class="nav-item" href="budget.html"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Set Budget</a>
+      <a class="nav-item" href="trips.html"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Trips &amp; Split</a>
+      <a class="nav-item" href="reports.html"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Reports</a>
+      <a class="nav-item active" href="settings.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-email" id="sidebarEmail"></div>
+      <a href="../index.html" class="signout-btn" id="signOutBtn"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header"><div><h1 class="page-title">Settings</h1><p class="page-sub">Manage your account and preferences</p></div></div>
+
+    <div style="max-width:560px;display:flex;flex-direction:column;gap:18px">
+
+      <div class="chart-card">
+        <h3 class="card-title" style="margin-bottom:18px">Profile</h3>
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+          <div style="width:56px;height:56px;border-radius:50%;background:#ede9fe;color:#7c3aed;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700" id="avatarEl">U</div>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:#111827" id="profileName">User</div>
+            <div style="font-size:13px;color:#9ca3af" id="profileEmail">user@email.com</div>
+          </div>
+        </div>
+        <div class="form-group"><label>Display Name</label><input type="text" id="settingsName" class="form-input"/></div>
+        <button class="btn-save" id="saveProfile">Save Changes</button>
+        <div id="profileMsg" style="display:none;margin-top:12px;padding:10px 14px;background:#d1fae5;border-radius:8px;color:#065f46;font-size:13px">✅ Profile updated!</div>
+      </div>
+
+      <div class="chart-card">
+        <h3 class="card-title" style="margin-bottom:18px">Data Management</h3>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:#f9fafb;border-radius:10px;border:1px solid #e5e7eb">
+            <div><div style="font-size:14px;font-weight:500;color:#374151">Export Data</div><div style="font-size:12px;color:#9ca3af;margin-top:2px">Download all transactions as CSV</div></div>
+            <button class="btn-purple" id="exportBtn" style="font-size:13px;padding:8px 14px">Export CSV</button>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:#fff5f5;border-radius:10px;border:1px solid #fecaca">
+            <div><div style="font-size:14px;font-weight:500;color:#dc2626">Clear All Data</div><div style="font-size:12px;color:#9ca3af;margin-top:2px">Permanently delete all transactions</div></div>
+            <button id="clearBtn" style="background:#dc2626;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer">Clear All</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h3 class="card-title" style="margin-bottom:14px">About Finova</h3>
+        <p style="font-size:14px;color:#6b7280;line-height:1.7">Finova is your smart expense tracker built for Indians. Track every rupee, stay within budget, and build better financial habits — completely free.</p>
+        <p style="font-size:12px;color:#9ca3af;margin-top:12px">Version 1.0.0 • © 2026 Finova</p>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/common.js"></script>
+  <script>
+    function fmt(n){return '₹'+parseFloat(n).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});}
+    const user = getUser();
+    document.getElementById('profileName').textContent = user.name;
+    document.getElementById('profileEmail').textContent = user.email;
+    document.getElementById('avatarEl').textContent = user.name[0].toUpperCase();
+    document.getElementById('settingsName').value = user.name;
+
+    document.getElementById('saveProfile').addEventListener('click',()=>{
+      const name = document.getElementById('settingsName').value.trim();
+      if (!name) return;
+      const users = JSON.parse(localStorage.getItem('fv_users')||'{}');
+      if (users[user.email]) users[user.email].name = name;
+      localStorage.setItem('fv_users', JSON.stringify(users));
+      const updated = {...user, name};
+      localStorage.setItem('fv_current_user', JSON.stringify(updated));
+      document.getElementById('profileName').textContent = name;
+      document.getElementById('avatarEl').textContent = name[0].toUpperCase();
+      const msg = document.getElementById('profileMsg');
+      msg.style.display='block';
+      setTimeout(()=>msg.style.display='none',3000);
+    });
+
+    document.getElementById('exportBtn').addEventListener('click',()=>{
+      const txns = getTxns();
+      if (!txns.length){alert('No transactions to export.');return;}
+      const csv = ['Date,Category,Note,Type,Amount']
+        .concat(txns.map(t=>`${t.date},${t.category},"${t.note}",${t.type},${t.amount}`))
+        .join('\n');
+      const a=document.createElement('a');
+      a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+      a.download='finova_transactions.csv';
+      a.click();
+    });
+
+    document.getElementById('clearBtn').addEventListener('click',()=>{
+      if (confirm('Are you sure? This will permanently delete ALL your transactions.')) {
+        saveTxns([]);
+        alert('All data cleared.');
+      }
+    });
+  </script>
+</body>
+</html>
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="modal-top"><h3>Add Expense</h3><button class="modal-close" id="modalClose">✕</button></div>
+    <div class="form-group"><label>Amount (₹)</label><input type="number" id="expAmount" class="form-input" placeholder="e.g. 500"/></div>
+    <div class="form-group"><label>Note</label><input type="text" id="expNote" class="form-input" placeholder="e.g. Zomato order"/></div>
+    <div class="form-group"><label>Category</label>
+      <select id="expCategory" class="form-input">
+        <option>Food &amp; Dining</option><option>Travel</option><option>Shopping</option>
+        <option>Health &amp; Fitness</option><option>Entertainment</option>
+        <option>Bills &amp; Utilities</option><option>Education</option><option>Other</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Date</label><input type="date" id="expDate" class="form-input"/></div>
+    <div id="expError" class="error-msg" style="display:none"></div>
+    <button class="btn-save" id="saveExpense">Add Expense</button>
+  </div>
+</div>

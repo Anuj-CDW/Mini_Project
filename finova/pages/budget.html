@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Set Budget – Finova</title>
+  <link rel="stylesheet" href="../css/dashboard.css"/>
+  <link rel="stylesheet" href="../css/subpage.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-box">F</div><strong>Finova</strong></div>
+    <nav class="sidebar-nav">
+      <a class="nav-item" href="dashboard.html"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Dashboard</a>
+      <a class="nav-item" href="#" id="addExpenseNav"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Add Expense</a>
+      <a class="nav-item active" href="budget.html"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Set Budget</a>
+      <a class="nav-item" href="trips.html"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Trips &amp; Split</a>
+      <a class="nav-item" href="reports.html"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Reports</a>
+      <a class="nav-item" href="settings.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-email" id="sidebarEmail"></div>
+      <a href="../index.html" class="signout-btn" id="signOutBtn"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header"><div><h1 class="page-title">Set Budget</h1><p class="page-sub">Manage your monthly spending limit</p></div></div>
+
+    <div style="max-width:560px">
+      <div class="chart-card" style="margin-bottom:22px">
+        <h3 class="card-title">Monthly Budget</h3>
+        <div id="budgetStatus" style="margin-bottom:20px"></div>
+        <div class="form-group">
+          <label>Set New Monthly Budget (₹)</label>
+          <input type="number" id="newBudget" class="form-input" placeholder="e.g. 50000"/>
+        </div>
+        <button class="btn-save" id="saveBudget">Update Budget</button>
+        <div id="budgetMsg" style="display:none;margin-top:12px;padding:10px 14px;background:#d1fae5;border-radius:8px;color:#065f46;font-size:13px">✅ Budget updated successfully!</div>
+      </div>
+
+      <div class="chart-card">
+        <h3 class="card-title">Category-wise Spending</h3>
+        <div id="catSpending"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/common.js"></script>
+  <script>
+    function fmt(n){return '₹'+parseFloat(n).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});}
+    const CAT_COLORS={'Travel':'#7c3aed','Health & Fitness':'#06b6d4','Entertainment':'#10b981','Bills & Utilities':'#f59e0b','Other':'#ef4444','Food & Dining':'#f97316','Shopping':'#ec4899','Education':'#3b82f6'};
+    function catColor(c){return CAT_COLORS[c]||'#9ca3af';}
+
+    function thisMonth(){const d=new Date();return d.getFullYear()+'-'+(String(d.getMonth()+1).padStart(2,'0'));}
+
+    function render() {
+      const budget = getBudget();
+      const txns   = getTxns().filter(t=>t.type!=='income'&&t.date&&t.date.startsWith(thisMonth()));
+      const spent  = txns.reduce((s,t)=>s+t.amount,0);
+      const pct    = budget > 0 ? Math.min(100, Math.round(spent/budget*100)) : 0;
+      const color  = pct >= 90 ? '#dc2626' : pct >= 70 ? '#f59e0b' : '#7c3aed';
+
+      document.getElementById('newBudget').value = budget;
+      document.getElementById('budgetStatus').innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:10px">
+          <div>
+            <div style="font-size:13px;color:#9ca3af;margin-bottom:4px">Spent this month</div>
+            <div style="font-size:28px;font-weight:800;color:#111827">${fmt(spent)}</div>
+            <div style="font-size:13px;color:#9ca3af;margin-top:2px">of ${fmt(budget)} budget</div>
+          </div>
+          <div style="font-size:32px;font-weight:800;color:${color}">${pct}%</div>
+        </div>
+        <div style="height:10px;background:#f3f4f6;border-radius:6px;overflow:hidden">
+          <div style="height:100%;background:${color};width:${pct}%;border-radius:6px;transition:width .6s"></div>
+        </div>
+        ${pct>=90?'<div style="margin-top:10px;padding:10px;background:#fee2e2;border-radius:8px;font-size:13px;color:#dc2626">⚠️ You\'ve used '+pct+'% of your budget!</div>':''}
+      `;
+
+      // Category breakdown
+      const catMap = {};
+      txns.forEach(t=>{catMap[t.category]=(catMap[t.category]||0)+t.amount;});
+      const total = Object.values(catMap).reduce((a,b)=>a+b,0) || 1;
+      document.getElementById('catSpending').innerHTML = Object.entries(catMap)
+        .sort((a,b)=>b[1]-a[1])
+        .map(([cat,amt])=>{
+          const p = Math.round(amt/total*100);
+          const c = catColor(cat);
+          return `<div style="margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+              <span style="font-size:13px;font-weight:500;color:#374151">${cat}</span>
+              <span style="font-size:13px;font-weight:600;color:#111827">${fmt(amt)} <span style="color:#9ca3af;font-weight:400">(${p}%)</span></span>
+            </div>
+            <div style="height:7px;background:#f3f4f6;border-radius:4px;overflow:hidden">
+              <div style="height:100%;background:${c};width:${p}%;border-radius:4px"></div>
+            </div>
+          </div>`;
+        }).join('') || '<p style="color:#9ca3af;font-size:14px;text-align:center;padding:20px 0">No expenses this month yet.</p>';
+    }
+
+    document.getElementById('saveBudget').addEventListener('click', () => {
+      const val = parseInt(document.getElementById('newBudget').value);
+      if (!val || val <= 0) return;
+      saveBudget(val);
+      const msg = document.getElementById('budgetMsg');
+      msg.style.display = 'block';
+      setTimeout(() => msg.style.display='none', 3000);
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
+<!-- ADD EXPENSE MODAL -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="modal-top"><h3>Add Expense</h3><button class="modal-close" id="modalClose">✕</button></div>
+    <div class="form-group"><label>Amount (₹)</label><input type="number" id="expAmount" class="form-input" placeholder="e.g. 500"/></div>
+    <div class="form-group"><label>Note</label><input type="text" id="expNote" class="form-input" placeholder="e.g. Zomato order"/></div>
+    <div class="form-group"><label>Category</label>
+      <select id="expCategory" class="form-input">
+        <option>Food &amp; Dining</option><option>Travel</option><option>Shopping</option>
+        <option>Health &amp; Fitness</option><option>Entertainment</option>
+        <option>Bills &amp; Utilities</option><option>Education</option><option>Other</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Date</label><input type="date" id="expDate" class="form-input"/></div>
+    <div id="expError" class="error-msg" style="display:none"></div>
+    <button class="btn-save" id="saveExpense">Add Expense</button>
+  </div>
+</div>
