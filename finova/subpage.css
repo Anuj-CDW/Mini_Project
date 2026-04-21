@@ -1,6 +1,0 @@
-.trips-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.trip-card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.04);transition:all .2s}
-.trip-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.08)}
-
-@media(max-width:900px){.trips-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:640px){.trips-grid{grid-template-columns:1fr}}
