@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Trips & Split – Finova</title>
+  <link rel="stylesheet" href="../css/dashboard.css"/>
+  <link rel="stylesheet" href="../css/subpage.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-box">F</div><strong>Finova</strong></div>
+    <nav class="sidebar-nav">
+      <a class="nav-item" href="dashboard.html"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Dashboard</a>
+      <a class="nav-item" href="#" id="addExpenseNav"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Add Expense</a>
+      <a class="nav-item" href="budget.html"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Set Budget</a>
+      <a class="nav-item active" href="trips.html"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Trips &amp; Split</a>
+      <a class="nav-item" href="reports.html"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Reports</a>
+      <a class="nav-item" href="settings.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-email" id="sidebarEmail"></div>
+      <a href="../index.html" class="signout-btn" id="signOutBtn"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <div><h1 class="page-title">Trips &amp; Split</h1><p class="page-sub">Track group expenses and settle up</p></div>
+      <button class="btn-purple" id="newTripBtn">+ New Trip</button>
+    </div>
+
+    <div id="tripsGrid" class="trips-grid"></div>
+    <div id="noTrips" style="text-align:center;padding:60px 20px;display:none">
+      <div style="font-size:48px;margin-bottom:16px">✈️</div>
+      <h3 style="color:#374151;margin-bottom:8px">No trips yet</h3>
+      <p style="color:#9ca3af;font-size:14px">Create a trip to track group expenses and split bills easily.</p>
+    </div>
+  </main>
+
+  <!-- NEW TRIP MODAL -->
+  <div class="modal-bg" id="tripModalBg">
+    <div class="modal" style="max-width:500px">
+      <div class="modal-top"><h3>Create New Trip</h3><button class="modal-close" id="tripModalClose">✕</button></div>
+      <div class="form-group"><label>Trip Name</label><input type="text" id="tripName" class="form-input" placeholder="e.g. Goa Trip 2026"/></div>
+      <div class="form-group"><label>Members (comma-separated)</label><input type="text" id="tripMembers" class="form-input" placeholder="e.g. Rahul, Priya, Amit"/></div>
+      <div class="form-group"><label>Date</label><input type="date" id="tripDate" class="form-input"/></div>
+      <button class="btn-save" id="saveTripBtn">Create Trip</button>
+    </div>
+  </div>
+
+  <!-- TRIP DETAIL MODAL -->
+  <div class="modal-bg" id="tripDetailBg">
+    <div class="modal" style="max-width:600px;max-height:90vh;overflow-y:auto">
+      <div class="modal-top"><h3 id="tripDetailTitle">Trip</h3><button class="modal-close" id="tripDetailClose">✕</button></div>
+      <div id="tripDetailBody"></div>
+      <div style="border-top:1px solid #e5e7eb;padding-top:16px;margin-top:16px">
+        <h4 style="font-size:14px;font-weight:600;margin-bottom:12px;color:#374151">Add Expense to Trip</h4>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+          <input type="text" id="tripExpNote" class="form-input" placeholder="Description"/>
+          <input type="number" id="tripExpAmt" class="form-input" placeholder="Amount (₹)"/>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+          <select id="tripExpPaidBy" class="form-input"><option>Select who paid</option></select>
+          <input type="date" id="tripExpDate" class="form-input"/>
+        </div>
+        <button class="btn-save" id="addTripExpBtn">Add Expense</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/common.js"></script>
+  <script>
+    function fmt(n){return '₹'+parseFloat(n).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});}
+    function getTrips(){return JSON.parse(localStorage.getItem('fv_trips_'+getUser().email)||'[]');}
+    function saveTrips(t){localStorage.setItem('fv_trips_'+getUser().email,JSON.stringify(t));}
+    function today(){return new Date().toISOString().split('T')[0];}
+
+    document.getElementById('tripDate').value = today();
+    document.getElementById('tripExpDate').value = today();
+
+    let currentTripId = null;
+
+    function renderTrips() {
+      const trips = getTrips();
+      const grid = document.getElementById('tripsGrid');
+      const noTrips = document.getElementById('noTrips');
+      if (!trips.length){grid.innerHTML='';noTrips.style.display='block';return;}
+      noTrips.style.display='none';
+      grid.innerHTML = trips.map(trip=>{
+        const total = (trip.expenses||[]).reduce((s,e)=>s+e.amount,0);
+        const perHead = trip.members.length ? total/trip.members.length : 0;
+        return `<div class="trip-card" data-id="${trip.id}">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px">
+            <div>
+              <div style="font-size:16px;font-weight:700;color:#111827">${trip.name}</div>
+              <div style="font-size:13px;color:#9ca3af;margin-top:3px">${trip.date} • ${trip.members.length} members</div>
+            </div>
+            <span style="font-size:12px;background:#ede9fe;color:#7c3aed;padding:3px 10px;border-radius:20px;font-weight:500">Active</span>
+          </div>
+          <div style="display:flex;gap:20px;margin-bottom:14px">
+            <div><div style="font-size:11px;color:#9ca3af">Total Spent</div><div style="font-size:18px;font-weight:800;color:#111827">${fmt(total)}</div></div>
+            <div><div style="font-size:11px;color:#9ca3af">Per Person</div><div style="font-size:18px;font-weight:800;color:#7c3aed">${fmt(perHead)}</div></div>
+            <div><div style="font-size:11px;color:#9ca3af">Expenses</div><div style="font-size:18px;font-weight:800;color:#111827">${(trip.expenses||[]).length}</div></div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+            ${trip.members.map(m=>`<span style="background:#f3f4f6;color:#374151;padding:3px 10px;border-radius:20px;font-size:12px">${m}</span>`).join('')}
+          </div>
+          <button class="btn-purple" style="width:100%;padding:9px;font-size:13px" onclick="openTripDetail('${trip.id}')">View Details →</button>
+        </div>`;
+      }).join('');
+    }
+
+    function openTripDetail(id) {
+      currentTripId = id;
+      const trips = getTrips();
+      const trip = trips.find(t=>t.id===id);
+      if (!trip) return;
+      document.getElementById('tripDetailTitle').textContent = trip.name;
+      document.getElementById('tripExpDate').value = today();
+
+      // Populate paid-by
+      const paidSel = document.getElementById('tripExpPaidBy');
+      paidSel.innerHTML = '<option>Select who paid</option>' + trip.members.map(m=>`<option>${m}</option>`).join('');
+
+      renderTripDetail(trip);
+      document.getElementById('tripDetailBg').classList.add('open');
+    }
+
+    function renderTripDetail(trip) {
+      const total = (trip.expenses||[]).reduce((s,e)=>s+e.amount,0);
+      const perHead = trip.members.length ? total/trip.members.length : 0;
+
+      // Calculate settlements
+      const paid = {};
+      trip.members.forEach(m=>{paid[m]=0;});
+      (trip.expenses||[]).forEach(e=>{if(paid[e.paidBy]!==undefined)paid[e.paidBy]+=e.amount;});
+      const settlements = trip.members.map(m=>({name:m,balance:paid[m]-perHead}));
+
+      document.getElementById('tripDetailBody').innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+          <div class="stat-card"><div class="stat-left"><span class="stat-label">Total</span><span class="stat-val">${fmt(total)}</span></div></div>
+          <div class="stat-card"><div class="stat-left"><span class="stat-label">Per Person</span><span class="stat-val" style="color:#7c3aed">${fmt(perHead)}</span></div></div>
+          <div class="stat-card"><div class="stat-left"><span class="stat-label">Members</span><span class="stat-val">${trip.members.length}</span></div></div>
+        </div>
+        <h4 style="font-size:14px;font-weight:600;color:#374151;margin-bottom:10px">Settlement Summary</h4>
+        <div style="margin-bottom:20px">${settlements.map(s=>
+          `<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-radius:8px;background:${s.balance>=0?'#d1fae5':'#fee2e2'};margin-bottom:6px">
+            <span style="font-size:13px;font-weight:500;color:#374151">${s.name}</span>
+            <span style="font-size:13px;font-weight:700;color:${s.balance>=0?'#065f46':'#dc2626'}">${s.balance>=0?'Gets back ':'Owes '}${fmt(Math.abs(s.balance))}</span>
+          </div>`
+        ).join('')}</div>
+        <h4 style="font-size:14px;font-weight:600;color:#374151;margin-bottom:10px">Expenses</h4>
+        <div>${(trip.expenses||[]).slice().reverse().map(e=>
+          `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid #f3f4f6">
+            <div><div style="font-size:13px;font-weight:500;color:#111827">${e.note}</div><div style="font-size:12px;color:#9ca3af">${e.date} • Paid by ${e.paidBy}</div></div>
+            <span style="font-size:14px;font-weight:700;color:#111827">${fmt(e.amount)}</span>
+          </div>`
+        ).join('') || '<p style="color:#9ca3af;font-size:13px;text-align:center;padding:20px 0">No expenses added yet.</p>'}</div>
+      `;
+    }
+
+    document.getElementById('addTripExpBtn').addEventListener('click',()=>{
+      const note = document.getElementById('tripExpNote').value.trim();
+      const amt  = parseFloat(document.getElementById('tripExpAmt').value);
+      const paid = document.getElementById('tripExpPaidBy').value;
+      const date = document.getElementById('tripExpDate').value;
+      if (!note||!amt||paid==='Select who paid') return;
+      const trips = getTrips();
+      const trip  = trips.find(t=>t.id===currentTripId);
+      if (!trip) return;
+      if (!trip.expenses) trip.expenses=[];
+      trip.expenses.push({id:Date.now(),note,amount:amt,paidBy:paid,date});
+      saveTrips(trips);
+      document.getElementById('tripExpNote').value='';
+      document.getElementById('tripExpAmt').value='';
+      renderTripDetail(trip);
+      renderTrips();
+    });
+
+    // New trip modal
+    document.getElementById('newTripBtn').addEventListener('click',()=>document.getElementById('tripModalBg').classList.add('open'));
+    document.getElementById('tripModalClose').addEventListener('click',()=>document.getElementById('tripModalBg').classList.remove('open'));
+    document.getElementById('tripDetailClose').addEventListener('click',()=>document.getElementById('tripDetailBg').classList.remove('open'));
+
+    document.getElementById('saveTripBtn').addEventListener('click',()=>{
+      const name    = document.getElementById('tripName').value.trim();
+      const members = document.getElementById('tripMembers').value.split(',').map(m=>m.trim()).filter(Boolean);
+      const date    = document.getElementById('tripDate').value;
+      if (!name||!members.length) return;
+      const trips = getTrips();
+      trips.push({id:Date.now().toString(),name,members,date,expenses:[]});
+      saveTrips(trips);
+      document.getElementById('tripModalBg').classList.remove('open');
+      document.getElementById('tripName').value='';
+      document.getElementById('tripMembers').value='';
+      renderTrips();
+    });
+
+    renderTrips();
+  </script>
+</body>
+</html>
